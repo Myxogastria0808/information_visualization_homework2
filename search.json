@@ -1,0 +1,86 @@
+[
+  {
+    "objectID": "explanation.html#b2-視覚的表現",
+    "href": "explanation.html#b2-視覚的表現",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B2) 視覚的表現",
+    "text": "(B2) 視覚的表現\n\n\n\n\n\n\n\n\n\n\n視覚的表現のソースコード\nlibrary(ggplot2)\nsuppressMessages({\n    library(showtext)\n    # フォントの読み込み\n    showtext::showtext_auto()\n})\n\n# データを読み込む\nexpo_data &lt;- read.csv(\"./data/data.csv\")\n# 西暦順にラベルを並べる\nlabel &lt;- paste0(\n    expo_data$name[order(expo_data$western_year)],\n    \" (\",\n    expo_data$western_year[order(expo_data$western_year)],\n    \"年)\"\n)\nexpo_data$label &lt;- factor(\n    label,\n    levels = label,\n    ordered = TRUE\n)\n# 平均年収のスケールを調整する\nexpo_data$give_mean_10k &lt;- expo_data$give_mean / 10000\n# 平均年収と入場料のスケールを合わせる\nentrance_fee_min &lt;- min(expo_data$entrance_fee)\nentrance_fee_max &lt;- max(expo_data$entrance_fee)\ngive_mean_min &lt;- min(expo_data$give_mean_10k)\ngive_mean_max &lt;- max(expo_data$give_mean_10k)\nscaler &lt;- (entrance_fee_max - entrance_fee_min) /\n    (give_mean_max - give_mean_min)\n# グラフの作成\nggplot(data = expo_data, aes(x = label)) +\n    geom_line(\n        aes(y = entrance_fee, group = 1, colour = \"入場料 (1円単位)\"),\n        linewidth = 1.2\n    ) +\n    geom_line(\n        aes(\n            y = give_mean_10k * scaler,\n            group = 1,\n            colour = \"平均所得 (1万円単位)\"\n        ),\n        linewidth = 1.2\n    ) +\n    scale_y_continuous(\n        expand = c(0, 0),\n        sec.axis = sec_axis(\n            transform = ~ .x / scaler,\n            breaks = seq(from = give_mean_min, to = give_mean_max, by = 50),\n            name = \"\\n日本国民の平均所得 (万円)\\n\"\n        )\n    ) +\n    scale_x_discrete(expand = c(0.07, 0.07)) +\n    scale_color_manual(\n        name = \"凡例\",\n        values = c(\"入場料 (1円単位)\" = \"blue\", \"平均所得 (1万円単位)\" = \"red\")\n    ) +\n    labs(\n        x = \"\\n万博名 (開催年)\\n\",\n        y = \"\\n万国博覧会の大人入場料 (円) \\n\",\n        title = \"\\n万博の入場料と平均所得\",\n        subtitle = \"日本で開催された万国博覧会の大人の入場料と日本国民の平均所得(万円)との関係\"\n    ) +\n    theme(\n        # 基本フォントサイズ\n        text = element_text(size = 30),\n        # X軸ラベルの回転\n        axis.text.x = element_text(angle = 30, hjust = 1)\n    )"
+  },
+  {
+    "objectID": "explanation.html#b3-対象データ",
+    "href": "explanation.html#b3-対象データ",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B3) 対象データ",
+    "text": "(B3) 対象データ\n\n各項目について\n\nname\n\nデータの種類: N\n意味: 各万国博覧会の正式名称\n\nwestern_year\n\nデータの種類: T (データの構造では、\\(T_1\\)と表現することとする)\n意味: 各万国博覧会の開催開始年 (西暦)\n\nera_year\n\nデータの種類: T (データの構造では、\\(T_2\\)と表現することとする)\n意味: 各万国博覧会の開催開始年 (和暦)\n\nentrance_fee\n\nデータの種類: Q (データの構造では、\\(Q_1\\)と表現することとする)\n意味: 各万国博覧会の大人の入場料\n\ngive_mean\n\nデータの種類: Q (データの構造では、\\(Q_2\\)と表現することとする)\n意味: 各年の平均給与\n\n\n\n\nデータの構造について\n\\[\nN \\times T_1 \\times T_2 \\rightarrow Q_1 \\times Q_2\n\\]\n1変量質的 (名義) データと2変量時刻データの組をキーとする量的データの組"
+  },
+  {
+    "objectID": "explanation.html#b4-データの加工方法",
+    "href": "explanation.html#b4-データの加工方法",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B4) データの加工方法",
+    "text": "(B4) データの加工方法\n可視化を行うにあたり行なったデータの加工方法（他の人が再現できるような詳細度で説明すること。）\nname, western_year, entrance_feeは、 大阪・関西万博のサイト その1 (大阪・関西万博の正式名称の調査に使用)と 大阪・関西万博のサイト その2 (大阪・関西万博の大人入場料金の調査に使用)と OTOPICK (前述の情報以外の情報の調査に使用)より、 取得したデータを利用している。沖縄国際海洋博覧会の大人入場料金の調査に使用したサイトは、販売サイトであったため、リンクを貼っておりません。 Googleで「沖縄国際海洋博覧会 入場券」と検索すると、沖縄国際海洋博覧会の大人入場料金がわかるはずです。 なお、各万国博覧会の大人の入場料に関しては、日中の大人の料金であり、前売券と当日券の両方の金額が確認できた国際科学技術博覧会の入場料は当日券を、 平日券と一日券の両方の金額が確認できた大阪・関西万博の入場料は一日券を採用した。\ngive_meanの令和7年以外については、民間給与実態統計調査結果 (国税庁)の 統計表の「2－1　給与所得者数・給与額・税額」を利用している。\ngive_meanの令和7年のデータについては、マイナビの 1月の全国平均初年度年収を利用している。\n尚、give_meanとentrance_feeの金額の単位は、1円を1として集計している。\nデータの形式は、csv形式のデータである。 具体的なデータは、以下を参照のこと。\n\n\n\n\n\n\nデータの過加工に関しては、R言語で出力した可視化表現をQuartoでサイトの一部として表示している。\n具体的なプログラムについては、それぞれの可視化表現をしている箇所にソースコードも表示しているので、そちらを参照のこと。\n\n環境の再現\n以下の手順で環境の再現を行なうことができる。\n\n当レポジトリをclone\n\ngit clone https://github.com/Myxogastria0808/information_visualization_homework1\n\ndevShellを利用した環境に入る\n\n当レポジトリのルートのディレクトリで、以下のコマンドを実行する。\n以下のコマンドを実行するためには、Nixと Nix flakesが必要です。 Nixと Nix flakesについては、LinuxユーザとMacOSユーザで利用できるはずです。\nnix develop\n\nQuarto Websitesのプレビューを見る\n\n以下のコマンドを実行すると、ブラウザにビルド結果が表示されるはずである。\nquarto preview src\n\n\n環境の再現性について\nNixを採用したことにより、再現性の高い開発環境を構築することができた。\n情報可視化において、可視化表現の結果が常に再現可能である状態を維持することは 非常に重要なことだろう。 今後、情報可視化の分野においてもNixの利用が広まることを期待している。\n\n\nflake.nix\n以下のflake.nixが、このレポジトリの開発環境を構築するためのNix言語の記述になる。\n{\n  description = \"information_visualization_homework1\";\n  inputs = {\n    nixpkgs.url = \"github:NixOS/nixpkgs/nixos-25.05\";\n    flake-utils.url = \"github:numtide/flake-utils\";\n  };\n\n  outputs =\n    inputs:\n    inputs.flake-utils.lib.eachDefaultSystem (\n      system:\n      let\n        pkgs = inputs.nixpkgs.legacyPackages.${system};\n        rpkgs = with inputs.nixpkgs.legacyPackages.${system}.rPackages; [\n          DT\n          ggplot2\n          tidyverse\n          showtext\n        ];\n      in\n      {\n        devShells.default = pkgs.mkShell {\n          packages =\n            with pkgs;\n            [\n              R\n              quarto\n              noto-fonts-cjk-serif\n            ]\n            ++ rpkgs;\n        };\n      }\n    );\n}"
+  },
+  {
+    "objectID": "explanation.html#b5-可視化に利用したツール",
+    "href": "explanation.html#b5-可視化に利用したツール",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B5) 可視化に利用したツール",
+    "text": "(B5) 可視化に利用したツール\n\nプログラム言語\n\nR言語\n\nコードフォーマッタ\n\nAir\n\n使用したR言語のpackage\n\nDT\nggplot2\nshowtext\n\n環境の再現\n\nNix (Nix flakes)\n\nレポートのサイトの生成\n\nQuarto\n\nGitHub Pagesヘのデプロイ\n\nGitHub Actions \\(\\times\\) Nix\n\n\nソースコード等は、以下のレポジトリに公開しています。\nhttps://github.com/Myxogastria0808/information_visualization_homework1"
+  },
+  {
+    "objectID": "explanation.html#b6-表現規則",
+    "href": "explanation.html#b6-表現規則",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B6) 表現規則",
+    "text": "(B6) 表現規則\n表現規則（基本図形／視覚変数／配置規則を区別すること。基本規則／作図規則を区別すること。「◯◯◯に準じる」という表現は使わずに、すべて具体的に記述すること。）\n\n対象データ\n\n各万国博覧会の正式名称 \\(N \\times\\) 各万国博覧会の開催開始年 (西暦) \\(T_1 \\times\\) 各万国博覧会の開催開始年 (和暦) \\(T_2 \\rightarrow\\) 各万国博覧会の大人の入場料 \\(Q_1 \\times\\) 各年の平均給与 \\(Q_2\\)\n\n基本規則\n\n基本図形\n\n項目 \\(\\Rightarrow\\) 点\n項目を 各万国博覧会の開催開始年 (西暦) \\(T_1\\) の順に線でつなぐ\n\n視覚変数\n\n各万国博覧会の大人の入場料 \\(Q_1\\) と 各年の平均給与 \\(Q_2\\) の区別 \\(\\Rightarrow\\) 線の色\n\n配置規則\n\n各万国博覧会の正式名称 \\(N \\times\\) 各万国博覧会の開催開始年 (西暦) \\(T_1\\) \\(\\Rightarrow\\) 点の横方向の位置\n各万国博覧会の大人の入場料 \\(Q_1 \\Rightarrow\\) 点の縦方向の位置 (目盛りは、左側に従う)\n各年の平均給与 \\(Q_2 \\Rightarrow\\) 点の縦方向の位置 (目盛りは、右側に従う)\n\n\n作図規則\n\n直交座標系\n\\(x\\) 軸に時刻データの軸を \\(y\\) 軸には互いのスケールを鑑みてスケールを調整した各年の各万国博覧会の大人の入場料と平均給与の軸を \\(y_1\\) 軸と \\(y_2\\) 軸として設定する"
+  },
+  {
+    "objectID": "explanation.html#b4-生成aiの使用に関する情報",
+    "href": "explanation.html#b4-生成aiの使用に関する情報",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B4) 生成AIの使用に関する情報",
+    "text": "(B4) 生成AIの使用に関する情報\n\n(B4-1)\n\nAIサービス\n\nChatGPT\n\nURL\n\nhttps://chatgpt.com\n\n\nChatGPTを使用して、検証する題目が妥当かどうかの確認を行った。\n\n(B4-2) プロンプト\n\n過去、日本で開催された万博の入場料を比較することで、日本国民の所得の変化との関係を示すことはできますか？\n沖縄国際海洋博覧会が開催さいれていた当時の入場料金を教えてください。また、出典も明記してください。\n各年の日本国民の平均所得を公開しているサイトを教えてください\n調査対象のデータが時刻データとして扱って良いかどうかの確認 (プロンプトを要約して書いています)\n所得のデータについて、追加の質問 (プロンプトを要約して書いています)\n適切な可視化表現についての質問 (プロンプトを要約して書いています)\n\n(B4-3) AIの出力\n\nhttps://chatgpt.com/share/683ec5f2-3f98-8008-a2b6-69fd2f558425"
+  },
+  {
+    "objectID": "explanation.html#b5-aiを利用した可視化結果に対する批評",
+    "href": "explanation.html#b5-aiを利用した可視化結果に対する批評",
+    "title": "(B) 視覚的表現の解説",
+    "section": "(B5) AIを利用した可視化結果に対する批評",
+    "text": "(B5) AIを利用した可視化結果に対する批評\n非常に限られた情報しかインターネット上に存在しない質問に関しては、 正しい回答を得ることはできなかった。しかし、比較的充実した情報が インターネット上にあると考えられる質問に関しては、割と妥当な回答を 得ることができた。"
+  },
+  {
+    "objectID": "index.html#導入",
+    "href": "index.html#導入",
+    "title": "(A) 可視化結果の報告",
+    "section": "導入",
+    "text": "導入\n日本では過去に5回万国博覧会が開催されており、現在進行形で6回目の万博が開催されている。 第1回目の万博が開催された1970年から現在まで半世紀以上の時間の幅が存在する。 その間、日本国民の所得にも大小はあれど変化があると考えた。 そこで、日本で開催された万国博覧会のそれぞれの入場料と、 日本国民の所得の変化を観察できる指標の関係を見ることで、相関を視覚的表現で可視化できるのではないかと 考えた。"
+  },
+  {
+    "objectID": "index.html#a2-視覚的表現",
+    "href": "index.html#a2-視覚的表現",
+    "title": "(A) 可視化結果の報告",
+    "section": "(A2) 視覚的表現",
+    "text": "(A2) 視覚的表現"
+  },
+  {
+    "objectID": "index.html#a3-主張",
+    "href": "index.html#a3-主張",
+    "title": "(A) 可視化結果の報告",
+    "section": "(A3) 主張",
+    "text": "(A3) 主張\n\n1. 基本規則を説明する\nこの図では、横方向に年数の古い順に万国博覧会の開催開始年と 各万国博覧会の名称を、縦方向の左側に各万国博覧会の大人の入場料の目盛りを 1円単位で2000円おきに刻み、右側に日本国民の平均所得の目盛りを1万円単位で 50万円おきに刻んでいる。 青色の折線が万国博覧会の大人の入場料の変化を、 赤色の折線が日本国民の平均所得の変化を表している。\n\n\n2. 見えるものをそのまま言葉で説明する\n右側に近づく (現代に近づく) ほど、青色の折線と赤色の折線がともに 高くなっている。\n\n\n3. 主張を説明する\nこのように、各万国博覧会の大人の入場料と日本国民の平均所得には、 正の相関があることを確認することができる。 しかし、因果関係については、この可視化表現だけで説明することはできない。\n\n\n視覚的表現のソースコード\nlibrary(ggplot2)\nsuppressMessages({\n    library(showtext)\n    # フォントの読み込み\n    showtext::showtext_auto()\n})\n\n# データを読み込む\nexpo_data &lt;- read.csv(\"./data/data.csv\")\n# 西暦順にラベルを並べる\nlabel &lt;- paste0(\n    expo_data$name[order(expo_data$western_year)],\n    \" (\",\n    expo_data$western_year[order(expo_data$western_year)],\n    \"年)\"\n)\nexpo_data$label &lt;- factor(\n    label,\n    levels = label,\n    ordered = TRUE\n)\n# 平均年収のスケールを調整する\nexpo_data$give_mean_10k &lt;- expo_data$give_mean / 10000\n# 平均年収と入場料のスケールを合わせる\nentrance_fee_min &lt;- min(expo_data$entrance_fee)\nentrance_fee_max &lt;- max(expo_data$entrance_fee)\ngive_mean_min &lt;- min(expo_data$give_mean_10k)\ngive_mean_max &lt;- max(expo_data$give_mean_10k)\nscaler &lt;- (entrance_fee_max - entrance_fee_min) /\n    (give_mean_max - give_mean_min)\n# グラフの作成\nggplot(data = expo_data, aes(x = label)) +\n    geom_line(\n        aes(y = entrance_fee, group = 1, colour = \"入場料 (1円単位)\"),\n        linewidth = 1.2\n    ) +\n    geom_line(\n        aes(\n            y = give_mean_10k * scaler,\n            group = 1,\n            colour = \"平均所得 (1万円単位)\"\n        ),\n        linewidth = 1.2\n    ) +\n    scale_y_continuous(\n        expand = c(0, 0),\n        sec.axis = sec_axis(\n            transform = ~ .x / scaler,\n            breaks = seq(from = give_mean_min, to = give_mean_max, by = 50),\n            name = \"\\n日本国民の平均所得 (万円)\\n\"\n        )\n    ) +\n    scale_x_discrete(expand = c(0.07, 0.07)) +\n    scale_color_manual(\n        name = \"凡例\",\n        values = c(\"入場料 (1円単位)\" = \"blue\", \"平均所得 (1万円単位)\" = \"red\")\n    ) +\n    labs(\n        x = \"\\n万博名 (開催年)\\n\",\n        y = \"\\n万国博覧会の大人入場料 (円) \\n\",\n        title = \"\\n万博の入場料と平均所得\",\n        subtitle = \"日本で開催された万国博覧会の大人の入場料と日本国民の平均所得(万円)との関係\"\n    ) +\n    theme(\n        # 基本フォントサイズ\n        text = element_text(size = 30),\n        # X軸ラベルの回転\n        axis.text.x = element_text(angle = 30, hjust = 1)\n    )"
+  },
+  {
+    "objectID": "index.html#a4-出典",
+    "href": "index.html#a4-出典",
+    "title": "(A) 可視化結果の報告",
+    "section": "(A4) 出典",
+    "text": "(A4) 出典\nhttps://otokupick.com/1388/?utm_source=chatgpt.com/ (2025/6/3)\nhttps://www.expo2025.or.jp/association/ (2025/6/5)\nhttps://www.expo2025.or.jp/tickets-index/price/ (2025/6/5)\nhttps://www.nta.go.jp/publication/statistics/kokuzeicho/jikeiretsu/01_02.htm (2025/6/5)\nhttps://career-research.mynavi.jp/reserch/20250214_92405/ (2025/6/5)\nhttps://blog.statsbeginner.net/entry/2020/08/11/212405 (2025/6/5)"
+  },
+  {
+    "objectID": "index.html#a5-生成ai利用の有無",
+    "href": "index.html#a5-生成ai利用の有無",
+    "title": "(A) 可視化結果の報告",
+    "section": "(A5) 生成AI利用の有無",
+    "text": "(A5) 生成AI利用の有無\nChatGPTの利用をした。"
+  }
+]
