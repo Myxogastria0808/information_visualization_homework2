@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "ggplot",
+        "ggsave",
+        "hjust",
+        "rpkgs",
+        "showtext",
+        "showtextdb",
+        "sysfonts"
+    ],
+    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+}

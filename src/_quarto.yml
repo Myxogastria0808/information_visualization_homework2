@@ -1,0 +1,18 @@
+project:
+  type: website
+
+website:
+  title: "情報可視化レポート"
+  navbar:
+    left:
+      - href: index.qmd
+        text: "(A) 可視化結果の報告"
+      - href: explanation.qmd
+        text: "(B) 視覚的表現の解説"
+
+format:
+  html:
+    theme:
+      - yeti
+    css: styles.css
+    toc: true

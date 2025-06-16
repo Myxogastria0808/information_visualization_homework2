@@ -1,0 +1,69 @@
+---
+title: "(A) 可視化結果の報告"
+---
+
+## (A1) 日本で開催された万国博覧会の入場料と日本国民の所得との関係
+
+## 導入
+
+日本では過去に5回万国博覧会が開催されており、現在進行形で6回目の万博が開催されている。
+第1回目の万博が開催された1970年から現在まで半世紀以上の時間の幅が存在する。
+その間、日本国民の所得にも大小はあれど変化があると考えた。
+そこで、日本で開催された万国博覧会のそれぞれの入場料と、
+日本国民の所得の変化を観察できる指標の関係を見ることで、相関を視覚的表現で可視化できるのではないかと
+考えた。
+
+## (A2) 視覚的表現
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 8
+{{< include ./components/_graph.R >}}
+```
+
+## (A3) 主張
+
+### 1. 基本規則を説明する
+
+この図では、横方向に年数の古い順に万国博覧会の開催開始年と
+各万国博覧会の名称を、縦方向の左側に各万国博覧会の大人の入場料の目盛りを
+1円単位で2000円おきに刻み、右側に日本国民の平均所得の目盛りを1万円単位で
+50万円おきに刻んでいる。
+青色の折線が万国博覧会の大人の入場料の変化を、
+赤色の折線が日本国民の平均所得の変化を表している。
+
+### 2. 見えるものをそのまま言葉で説明する
+
+右側に近づく (現代に近づく) ほど、青色の折線と赤色の折線がともに
+高くなっている。
+
+### 3. 主張を説明する
+
+このように、各万国博覧会の大人の入場料と日本国民の平均所得には、
+正の相関があることを確認することができる。
+しかし、因果関係については、この可視化表現だけで説明することはできない。
+
+### 視覚的表現のソースコード
+
+```r
+{{< include ./components/_graph.R >}}
+```
+
+## (A4) 出典
+
+[https://otokupick.com/1388/?utm_source=chatgpt.com/](https://otokupick.com/1388/?utm_source=chatgpt.com/) (2025/6/3)
+
+[https://www.expo2025.or.jp/association/](https://www.expo2025.or.jp/association/) (2025/6/5)
+
+[https://www.expo2025.or.jp/tickets-index/price/](https://www.expo2025.or.jp/tickets-index/price/) (2025/6/5)
+
+[https://www.nta.go.jp/publication/statistics/kokuzeicho/jikeiretsu/01_02.htm](https://www.nta.go.jp/publication/statistics/kokuzeicho/jikeiretsu/01_02.htm) (2025/6/5)
+
+[https://career-research.mynavi.jp/reserch/20250214_92405/](https://career-research.mynavi.jp/reserch/20250214_92405/) (2025/6/5)
+
+[https://blog.statsbeginner.net/entry/2020/08/11/212405](https://blog.statsbeginner.net/entry/2020/08/11/212405) (2025/6/5)
+
+## (A5) 生成AI利用の有無
+
+ChatGPTの利用をした。
