@@ -1,7 +1,7 @@
 {
   description = "information_visualization_homework1";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -20,12 +20,16 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            R
-            quarto
-            noto-fonts-cjk-serif
-          ] ++ rpkgs;
+          packages =
+            with pkgs;
+            [
+              R
+              quarto
+              noto-fonts-cjk-serif
+            ]
+            ++ rpkgs;
         };
       }
     );
 }
+
