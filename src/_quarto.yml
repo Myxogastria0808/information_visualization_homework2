@@ -6,9 +6,7 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: "(A) 可視化結果の報告"
-      - href: explanation.qmd
-        text: "(B) 視覚的表現の解説"
+        text: "可視化結果の報告"
 
 format:
   html:
