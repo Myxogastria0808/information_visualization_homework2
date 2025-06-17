@@ -2,23 +2,27 @@ library(ggplot2)
 suppressMessages({
     library(tidyverse)
     library(showtext)
-    showtext_auto()
+    # フォントの読み込み
+    showtext::showtext_auto()
 })
 
 # データを読み込む
 expo_data <- read.csv("./data/data.csv")
-
-# ラベル順
+# 西暦順にラベルを並べる
 label <- paste0(
     expo_data$name[order(expo_data$western_year)],
     " (",
     expo_data$western_year[order(expo_data$western_year)],
     "年)"
 )
-expo_data$label <- factor(label, levels = label, ordered = TRUE)
-
-# スケーリング準備
+expo_data$label <- factor(
+    label,
+    levels = label,
+    ordered = TRUE
+)
+# 平均年収のスケールを調整する
 expo_data$give_mean_10k <- expo_data$give_mean / 10000
+# 平均年収と入場料のスケールを合わせる
 entrance_fee_min <- min(expo_data$entrance_fee)
 entrance_fee_max <- max(expo_data$entrance_fee)
 give_mean_min <- min(expo_data$give_mean_10k)
@@ -26,7 +30,6 @@ give_mean_max <- max(expo_data$give_mean_10k)
 scaler <- (entrance_fee_max - entrance_fee_min) /
     (give_mean_max - give_mean_min)
 expo_data$scaled_income <- expo_data$give_mean_10k * scaler
-
 # 縦長のdata.frameに変換
 expo_data <- expo_data %>%
     select(label, entrance_fee, scaled_income) %>%
@@ -42,8 +45,7 @@ expo_data <- expo_data %>%
             "scaled_income" = "平均所得 (1万円単位)"
         )
     )
-
-# グラフ
+# グラフの作成
 ggplot(data = expo_data, aes(x = label, y = value, fill = type)) +
     geom_col(position = "dodge", width = 0.6) +
     scale_y_continuous(
